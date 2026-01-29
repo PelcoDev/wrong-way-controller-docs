@@ -1,5 +1,8 @@
 # Wrong Way Controller Documentation
 
+### Release Notes
+[Release Notes](release-notes)
+
 Copyright © 2026 TraffiCalm Systems, LLC
 
 All rights reserved.
