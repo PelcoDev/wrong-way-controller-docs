@@ -4,9 +4,9 @@
 
 ### Added {#added-v5319}
 
-- Time jump detection: The system now detects and gracefully handles wall-clock time jumps (e.g. NTP corrections, DST changes) during monitoring, preventing stale state.
+- Time jump detection: The system now detects and gracefully handles wall-clock time jumps (e.g. NTP corrections, DST changes) during monitoring, preventing stale state and unintended reboots.
 - Startup version logging: The application version and release date are now logged at startup, making it easier to confirm what is deployed from log files.
-- Input gating for thermal camera: Thermal camera usage is now causes the corresponding input to be gated.
+- Input gating for thermal camera: Thermal camera usage now causes the corresponding input to be gated for the assigned zone.
 - APN configuration logging: Cellular connection checks now log APN configuration details to aid in network diagnostics.
 
 ### Changed {#changed-v5319}
