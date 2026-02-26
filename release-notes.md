@@ -1,5 +1,27 @@
 ﻿# Wrong Way Controller Software Release Notes
 
+## v5.3.19 - 2/26/2026
+
+### Added {#added-v5319}
+
+- Time jump detection: The system now detects and gracefully handles wall-clock time jumps (e.g. NTP corrections, DST changes) during monitoring, preventing stale state.
+- Startup version logging: The application version and release date are now logged at startup, making it easier to confirm what is deployed from log files.
+- Input gating for thermal camera: Thermal camera usage is now causes the corresponding input to be gated.
+- APN configuration logging: Cellular connection checks now log APN configuration details to aid in network diagnostics.
+
+### Changed {#changed-v5319}
+
+- Monotonic timers throughout: Timer implementations across all subsystems have been migrated to monotonic time sources, improving reliability in environments where the system clock may change.
+- RTSP stream handling improvements: FFmpeg restart logic has been hardened and stale stream detection added, reducing camera downtime after stream failures.
+- Thread safety improvements: Input state is now protected by a lock in ADC, mesh network, and detection processing paths, reducing the risk of race conditions.
+- Video processing refactor: FPS handling and remuxing logic have been encapsulated and streamlined for maintainability.
+- Protocol handler timeouts: Timeout values for SafePath and FDOT protocol handlers have been increased to better accommodate slower or high-latency connections.
+- FLIR camera NTP configuration: NTP config updates now attempt a GET before POST, to prevent unnecessary updates.
+
+### Fixed {#fixed-v5319}
+
+- Radar offline status check: The radar error string logic now correctly accounts for the offline radar status, preventing missed or misleading error reports.
+
 ## v5.3.18 - 2/17/2026
 
 ### Added {#added-v5318}
