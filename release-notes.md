@@ -1,6 +1,6 @@
 ﻿# Wrong Way Controller Software Release Notes
 
-## v5.3.20 - 2/26/2026
+## v5.3.20 - 3/11/2026
 
 ### Added {#added-v5320}
 
