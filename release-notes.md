@@ -1,5 +1,36 @@
 ﻿# Wrong Way Controller Software Release Notes
 
+## v5.3.20 - 2/26/2026
+
+### Added {#added-v5320}
+
+- Resilient public IP discovery. Public IP lookups now use a fault-tolerant multi-source library instead of a single third-party service. All sources (Pelco primary, four HTTP fallbacks, and two optional DNS fallbacks) are queried concurrently, and a quorum of matching results is required before an address is accepted. Per-source circuit breakers, a single automatic retry with jitter, and a 30-minute disk cache ensure the system continues operating through transient network failures. A stale cached value is returned if all live sources fail, maximizing uptime on embedded hardware.
+- Background public IP cache refresh service. A new script (scripts/refresh_public_ip_cache.py) and a corresponding systemd service and timer are included to proactively refresh the cached public IP in the background, reducing latency when the alert dispatcher needs the address.
+- Clock synchronization from router at startup. When NTP servers are configured on the router, the system now synchronizes the Pi's clock from the router shortly after startup, in addition to the existing periodic nightly sync. The nightly sync window has also been narrowed from a 5-minute range to a 2-minute range for more predictable scheduling.
+- Configurable camera buffer duration. Camera buffer duration is now tracked and stored as a per-camera setting, calculated from the measured frame rate and the configured buffer length. The FDOT event image selection logic uses this value instead of a hard-coded constant, producing more accurate event-centered image captures across different camera types and configurations.
+- RTSP input buffer size guard. If the raw RTSP input buffer exceeds 4 MB—indicating a parsing stall or runaway data accumulation—it is now reset automatically with a warning, preventing unbounded memory growth.
+- Oversized log file cleanup at startup. Log files larger than 100 MB are automatically deleted during startup to recover disk space from abnormally large files before normal log rotation continues.
+- Stale tracking data cleanup. The event dispatcher periodically purges entries older than 7 days from its internal event-status and deleted-file tracking sets, preventing unbounded memory growth over long uptimes.
+- Low disk space warning on the Troubleshoot page. When free space in /data drops to 50 MB or below, the Troubleshoot page now displays a critical warning with the current free space figure. Disk info, log retrieval, and log statistics each handle failures independently so the page renders even when one of those data sources is unavailable.
+
+### Changed {#changed-v5320}
+
+- FDOT/SWRI image spacing default changed from 2 s to 1 s. The base spacing between event-centered FDOT images is now 1 second. Spacing is still increased automatically when camera GOP metadata indicates keyframes are spaced more than 1 second apart, preserving image quality while reducing gaps for cameras with faster keyframe intervals.
+- Test alert confirmation delay removed. When triggering a test alert on a system with a confirmation zone, the confirmation zone event now fires 3 seconds after the alert zone event instead of after an extended delay.
+- File download requests logged at INFO level. Requests to the image and video download endpoints are now logged at INFO with the complete URL and final transfer timing, making it easier to trace delivery issues. All other API request/response logging was moved to DEBUG to reduce noise.
+- Settings save is now resilient to disk-full and other I/O errors. If the /data partition is full or a write fails for any other reason, the failure is logged with a full stack trace and the in-memory API credentials are correctly restored to their decrypted state. Previously a failed save could leave credentials in an encrypted state in memory.
+- Certificate save failures return an error response. If writing a TLS certificate to disk fails (e.g., due to a full disk), the API now returns HTTP 500 with an error message instead of silently proceeding.
+- Log download is now capped at 5,000,000 entries and handles failures gracefully, returning an HTTP 500 response rather than crashing the request.
+- Detection log storage is resilient to low-disk conditions. All file operations (open, write, flush, rollover, compress) in the detection log now handle OSError individually. Records that cannot be flushed due to a write error are counted and skipped rather than silently dropped or causing a crash. The log buffer is bounded and older entries are dropped when full.
+
+### Fixed {#fixed-v5320}
+
+- Race condition in concurrent alert-zone image capture eliminated. Image accumulation for zone 2 now uses a generation-gated slot and a dedicated worker so that only the authoritative capture job can publish results. Stale or superseded capture jobs exit early, preventing mismatched images from being associated with the wrong alert.
+- Alert images from a previous alert are no longer included in a new alert's update. The system now verifies that accumulated zone-2 images belong to the current alert ID before combining them with confirmation-zone images, discarding any images left over from a prior alert.
+- RTSP frame parsing no longer copies the input buffer on every NAL unit boundary. The parser now advances a read offset pointer through the buffer and only trims the buffer once per read cycle, substantially reducing CPU and memory allocations during continuous video streaming.
+- Disk usage query on the Troubleshoot page no longer crashes the page if /data is unavailable. get_file_system_info now returns None values on failure instead of propagating the exception.
+- Encryption key generation failure is now logged instead of silently ignored. If writing the secret key file to /data/secret.key fails (e.g., due to a full or read-only disk), the error is now captured and logged with a full stack trace rather than causing an unhandled exception.
+
 ## v5.3.19 - 2/26/2026
 
 ### Added {#added-v5319}
