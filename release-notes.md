@@ -23,6 +23,7 @@
 - SNAPStick failure handling — The system no longer shuts down on SNAPStick initialization failure. Mesh network operations are gracefully disabled, and the rest of the system continues to operate normally.
 - Router configuration validation at startup — Router settings are validated on startup to prevent an infinite restart loop caused by an unreachable or misconfigured router.
 - Timezone setting applied during router configuration — Timezone changes made in network settings are now correctly applied when router configuration is updated.
+- Faster FDOT/SwRI event image delivery — For FDOT and SwRI protocol deployments, image capture timing is now calculated dynamically based on zone topology (single-zone vs. two-zone) rather than the user-configured after-event capture length. This reduces end-to-end alert delivery latency. The After Event Video Timing Adjustment slider on the Advanced settings page is also hidden when the FDOT protocol is selected, since it no longer applies in that mode.
 
 ### Fixed {#fixed-v5321}
 
