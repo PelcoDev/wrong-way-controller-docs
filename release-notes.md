@@ -1,5 +1,37 @@
 ﻿# Wrong Way Controller Software Release Notes
 
+## v5.3.21 - 5/21/2026
+
+### Added {#added-v5321}
+
+- Troubleshoot page — A new dedicated Troubleshoot section is accessible from the navigation menu. It provides interactive network diagnostic tools: ping, traceroute (with ICMP/TCP/UDP protocol selection and port targeting), port reachability check, and a connectivity test against the configured alert endpoint. Traceroute results include per-hop latency and are rate-limited per user.
+- Over-the-Air (OTA) firmware updates — A new Firmware Update page allows uploading an encrypted firmware bundle and signed manifest directly from the browser. SHA-256 is calculated client-side before upload. Upload progress is displayed in real time, and current OTA status is shown on the page.
+- Camera management controls — Cameras that are missing at startup or are offline now display actionable warnings with Restart Service and Remove Camera buttons directly in camera settings. A Scan for Cameras Now button allows immediate camera discovery without waiting for the next automatic scan.
+- RSU device management — Roadside Unit (RSU) devices can now be configured from the Advanced settings page for event-triggered message activation. Devices can be added, edited, and removed via the UI.
+- Flasher duty cycle setting — A configurable duty cycle (1%–50%) for flashers is now available in the Flasher settings page, controlling how long flashers stay on during each flash cycle.
+- Custom RTSP port for cameras — Camera settings now accept an optional custom RTSP port, allowing use of non-standard ports (e.g. 8554) for RTSP stream URLs.
+- Controller time display and sync on status page — The status page now shows controller time alongside your local browser time at the top of the page, with a button to synchronize the controller's clock to your browser time.
+- SNAPStick unavailability warning — A dismissable banner is shown site-wide when the SNAPStick (mesh network adapter) is missing or disconnected, clearly indicating that collaborator device communication is affected while all other features remain available.
+- Logging mode toggle on Troubleshoot page — Debug logging can be temporarily enabled from the Troubleshoot page; it resets automatically after a set period.
+- System health API endpoint — A /api/v1/system/health endpoint is now available for external monitoring of system health status.
+
+### Changed {#changed-v5321}
+
+- External address field guidance (Advanced settings) — The external IP/DNS address field now includes an explanatory diagram and improved help text covering NAT/port-forwarding and direct-connection scenarios.
+- RTC driver now auto-detects chip variant — The real-time clock driver automatically identifies the installed RTC chip (PCF8563 or PCF85063) at startup, improving compatibility across hardware revisions without manual configuration.
+- Flasher activation debounce — Zone 0 and Zone 1 flasher activations now have a 1-second debounce gate to prevent spurious triggers from rapid successive detection events.
+- SNAPStick failure handling — The system no longer shuts down on SNAPStick initialization failure. Mesh network operations are gracefully disabled, and the rest of the system continues to operate normally.
+- Router configuration validation at startup — Router settings are validated on startup to prevent an infinite restart loop caused by an unreachable or misconfigured router.
+- Timezone setting applied during router configuration — Timezone changes made in network settings are now correctly applied when router configuration is updated.
+
+### Fixed {#fixed-v5321}
+
+- DNS server configuration — Multiple DNS servers are now correctly submitted when applying network configuration changes; previously, only a single server was applied.
+- Camera reconnection stability — Stale WebSocket reconnection tasks are now cancelled before new ones are scheduled for the same camera, eliminating duplicate reconnection attempts and connection-handling errors on camera reconnect.
+- Accelerometer initialization no longer causes restart loops — An I²C error during accelerometer startup is now handled gracefully instead of triggering an infinite restart loop.
+- RTSP stream recovery — FFmpeg is no longer allowed to internally reconnect to stale streams; reconnection is now fully managed by the application, preventing stale frame data from being processed after a camera disconnects and reconnects.
+- Detection thread restart scope — Changes on the Advanced settings page now only restart the detection thread when diagnostic LED settings are actually modified, avoiding unnecessary service disruption.
+
 ## v5.3.20 - 3/11/2026
 
 ### Added {#added-v5320}
