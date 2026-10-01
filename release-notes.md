@@ -1,5 +1,67 @@
 ﻿# Wrong Way Controller Software Release Notes
 
+## v5.4.1 - 9/30/2026
+
+### Why Upgrade {#why-upgrade-v541}
+
+This release connects the wrong-way controller to the PelcoHub cloud platform. It also makes the controller much better at protecting alerts and recovering from problems without a site visit.
+
+- **PelcoHub cloud connectivity.** A new PelcoHub protocol sends events, images and video, and device health to the cloud. It can also receive remote configuration, commands and software updates.
+- **Alerts are not lost.** Events waiting to be sent are kept through reboots and lost connections, and the times they report match the moment of detection.
+- **Better self-recovery.** The controller manages its own storage, keeps logs within set limits, and recovers cameras and the mesh network without being power-cycled or reconnected.
+- **Clearer troubleshooting.** The Status and Troubleshoot pages show where a connection is failing, along with storage use and hardware health.
+
+### Added {#added-v541}
+
+- Added PelcoHub as a third event protocol, alongside SafePath and FDOT. It is selected and set up on the Advanced page. Each controller needs its PelcoHub certificates installed during provisioning.
+- Added sending of wrong-way events to PelcoHub, with each detection's image and video. Events from the same vehicle are grouped as one incident.
+- Added remote configuration from PelcoHub. The controller reports back the settings it applied.
+- Added remote commands from PelcoHub: silence alerts, clear silence, restart the modem and restart the controller.
+- Added regular health reporting to PelcoHub, including the firmware versions of paired devices.
+- Added software updates started from PelcoHub, with progress reported back.
+- Added a Network section to the Status page. It shows whether the WAN is connected and whether the event server can be reached, and warns when either has a problem.
+- Added a step-by-step connection check that shows which stage failed and the likely cause, such as the clock, certificates or network.
+- Added storage use by category to the Troubleshoot page, plus counts of any records or alerts that could not be saved.
+- Added a clock synchronization panel to the Troubleshoot page for PelcoHub units.
+- Added the health of each hardware device to the controller's status: ADC, accelerometer, real-time clock and WAN.
+- Added PIC firmware and mesh script versions for paired devices on the Status page.
+- Added a "no WAN" warning to the Network Settings page.
+- Added automatic storage management. When space runs low, the controller frees it by trimming older logs and event media, and it sets aside an emergency reserve so alerts keep working.
+- Added saving of event images and video so they survive a reboot until delivered.
+- Added clock synchronization with the router, and with the carrier's network time on cellular units.
+
+### Changed {#changed-v541}
+
+- The web interface is now protected against cross-site request forgery.
+- Each controller now has its own unique sign-in session key. Everyone is signed out once after upgrading.
+- The application log can now hold more history: its default size is 75 MB, adjustable up to 100 MB.
+- The diagnostic LED now blinks steadily while detection is running normally.
+- Hardware outputs now start in a safe state when the controller powers up.
+- A controller now refuses a software update built for a different device type.
+- Switching event protocols now keeps each protocol's saved settings.
+- DNS server settings are now shown and applied when the router is in cellular mode.
+
+### Fixed {#fixed-v541}
+
+- Fixed alerts sometimes being lost when the controller's alert sending restarted.
+- Fixed reported event times being later than the actual detection.
+- Fixed a single failed software update blocking all later updates until it was cleared by hand.
+- Fixed detection sometimes not resuming after a channel scan.
+- Fixed camera discovery delaying startup.
+- Fixed FLIR cameras not reconnecting after dropping their connection.
+- Fixed video stream recovery retrying too aggressively.
+- Fixed the mesh network needing a physical reconnect to recover.
+- Fixed controller processes stopping after a single error. They now retry and recover on their own.
+- Fixed a full storage partition damaging saved settings or interrupting alerts.
+- Fixed settings changes being lost when the controller shut down.
+- Fixed logs growing past their size limits on busy days, and the detection log viewer showing only part of a day.
+- Fixed the real-time clock not always being updated when the controller synchronizes its clock at startup.
+- Fixed router DNS settings being applied incorrectly.
+- Fixed first-time setup overwriting network settings that had already been customized.
+- Fixed Network Settings showing outdated WAN information when there is no WAN connection.
+- Fixed the controller clock on the Status page drifting when the page was left open in a background tab.
+- Fixed a failed firmware update showing as "idle" instead of "failed".
+
 ## v5.3.21 - 5/21/2026
 
 ### Added {#added-v5321}
