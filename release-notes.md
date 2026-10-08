@@ -1,6 +1,6 @@
 ﻿# Wrong Way Controller Software Release Notes
 
-## v5.4.1 - 9/30/2026
+## v5.4.1 - 10/8/2026
 
 ### Why Upgrade {#why-upgrade-v541}
 
@@ -13,7 +13,9 @@ This release connects the wrong-way controller to the PelcoHub cloud platform. I
 
 ### Added {#added-v541}
 
-- Added PelcoHub as a third event protocol, alongside SafePath and FDOT. It is selected and set up on the Advanced page. Each controller needs its PelcoHub certificates installed during provisioning.
+- Added PelcoHub as a third event protocol, alongside SafePath and FDOT. It is selected and set up on the Advanced page.
+- Added PelcoHub certificate provisioning from the Advanced page. The controller creates its own key, requests a certificate and installs the returned provisioning file with its endpoints and media storage settings. Settings from the provisioning file are locked against the settings form, imports and remote configuration until a new file is installed or they are unlocked.
+- Added a live connection check after a PelcoHub certificate is installed. The Advanced page watches until the controller connects or fails, and allows 60 seconds for a retry.
 - Added sending of wrong-way events to PelcoHub, with each detection's image and video. Events from the same vehicle are grouped as one incident.
 - Added remote configuration from PelcoHub. The controller reports back the settings it applied.
 - Added remote commands from PelcoHub: silence alerts, clear silence, restart the modem and restart the controller.
@@ -32,9 +34,12 @@ This release connects the wrong-way controller to the PelcoHub cloud platform. I
 
 ### Changed {#changed-v541}
 
-- The web interface is now protected against cross-site request forgery.
+- The web interface is now protected against cross-site request forgery, including requests to the REST API from other sites.
 - Each controller now has its own unique sign-in session key. Everyone is signed out once after upgrading.
+- Changing or resetting the password now signs out every existing session.
 - The application log can now hold more history: its default size is 75 MB, adjustable up to 100 MB.
+- Log size settings now take effect right away, without a restart.
+- Shutdown and restart now finish within about 45 seconds, even if part of the controller stops responding.
 - The diagnostic LED now blinks steadily while detection is running normally.
 - Hardware outputs now start in a safe state when the controller powers up.
 - A controller now refuses a software update built for a different device type.
@@ -61,6 +66,16 @@ This release connects the wrong-way controller to the PelcoHub cloud platform. I
 - Fixed Network Settings showing outdated WAN information when there is no WAN connection.
 - Fixed the controller clock on the Status page drifting when the page was left open in a background tab.
 - Fixed a failed firmware update showing as "idle" instead of "failed".
+- Fixed an interrupted software update leaving the controller on the wrong or unverified software. At startup the controller now finishes the update or rolls it back.
+- Fixed wrong-way alert images and video being held up by unrelated background work, and slow image capture delaying flasher control.
+- Fixed clock synchronization failing on routers running RUT2 firmware 00.07.05.4.
+- Fixed timed waits being thrown off when the system clock jumps.
+- Fixed a camera that never answers its connection request stalling camera startup. Restarting a camera now respects its enable setting.
+- Fixed FLIR camera discovery failing when another device on the network sends an unexpected reply.
+- Fixed the detection log export leaving out the last minute of the selected range, and records being dropped or duplicated across a save.
+- Fixed the saved RSU API key being erased when an RSU was edited without re-entering it.
+- Fixed old input voltage readings being acted on.
+- Hardened the router settings, sign-in redirects and camera image proxy against injected or unsafe input.
 
 ## v5.3.21 - 5/21/2026
 
